@@ -2,7 +2,7 @@
   "name": "sequence",
   "version": "1.0.0",
   "type": "module",
-  "description": "Simple CLI tool to parse a string of characters and return an array of English words",
+  "description": "Simple function/module to parse a string of characters and return an array of English words",
   "main": "charStrParse.js",
   "scripts": {
     "test": "node --test tests/"

@@ -16,7 +16,7 @@ async function wordsFromStringPermRecurse(str, wordArray = null) {
     if (wordArray && !Array.isArray(wordArray)) {
       throw new Error("[optional] If 2nd argument provided, must be an array of strings.");
     }
-    console.time('WordPermRecurse');
+    console.time("permPerformance");
     // Used a set so only unique words are stored in the result.
     let result = new Set();
     // Some english dictionaries contain single letters outside of spoken english
@@ -24,11 +24,18 @@ async function wordsFromStringPermRecurse(str, wordArray = null) {
     const validSingleChar = ["a", "i"];
     // Recursive function to find all combinations of letters.
     function nextLetter(stringArray, stringLength, key, used) {
+      //Once a particular path of permutations has reached the length of the original string,
+      //stop the particular recursion path.
       if(key.length === stringLength){
         return;
       }
       for(let i = 0; i < stringLength; i++) {
-        if(used.indexOf("" + i) < 0){
+        // Check by index value if character has been used
+        // Although indexof method of an array is slightly more performant than on a string
+        // the concat method needed to add the new value to the array is less performant
+        // than the string concatonation method of '+' therefore making the overall function
+        // performance worse, hense the use of a string to track the used character index.
+        if(used.indexOf("" + i) < 0) {
           result.add(key + stringArray[i]);
           nextLetter(stringArray, stringLength, key + stringArray[i], used + i);
         }
@@ -36,10 +43,13 @@ async function wordsFromStringPermRecurse(str, wordArray = null) {
     }
     let stringArray = str.split("");
     let stringLength = stringArray.length;
+    // Iterate though each letter, add to result set and start recursive permutations for each.
     for (let i = 0; i < stringLength; i++) {
       result.add(stringArray[i]);
       nextLetter(stringArray, stringLength, stringArray[i], "" + i);
     }
+    // Check permutations against installed dictionary or supplied array of valid words,
+    // remove invalid permutations.
     if (wordArray) {
       for (const word of result) {
         if (!wordArray.includes(word)) {
@@ -48,12 +58,12 @@ async function wordsFromStringPermRecurse(str, wordArray = null) {
       } 
     } else {
       for (const word of result) {
-        if (!(await nodehun.spell(word)) || (word.length < 2 && !validSingleChar.includes(word))){
+        if (!(await nodehun.spell(word)) || (word.length < 2 && !validSingleChar.includes(word))) {
           result.delete(word);
         }
       }
     }
-    console.timeEnd('WordPermRecurse');
+    console.timeEnd("permPerformance");
     console.log(result);
     return result;
   } catch (error) {
@@ -62,18 +72,19 @@ async function wordsFromStringPermRecurse(str, wordArray = null) {
     console.log('String permutation function complete.');
   }
 }
-const str = "oogd";
-const words = [
-  'go',   'do',   'goo',
-  'dog',  'god',  'odd',
-  'dodo', 'good'
-];
+const str = "oogdasd";
 
-wordsFromStringPermRecurse(str, words);
+wordsFromStringPermRecurse(str);
 
-// Optionally you may without a supplied array of reference words and the installed
-// English dictionary will be used instead. In that case, comment out line 72 and uncomment line 77.
+// Optionally you may supply your own array of reference words which will be
+// used instead of the supplied english dictionary dependency. In that case,
+// comment out line 77 and uncomment line 82 - 87.
 
-// wordsFromStringPermRecurse(str);
+// const words = [
+//   'go',   'do',   'goo',
+//   'dog',  'god',  'odd',
+//   'dodo', 'good'
+// ];
+// wordsFromStringPermRecurse(str, words);
 
 export { wordsFromStringPermRecurse };
