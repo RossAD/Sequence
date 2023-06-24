@@ -10,6 +10,7 @@ const nodehun = new Nodehun(affix, dictionary);
 
 async function wordsFromStringPermRecurse(str, wordArray = null) {
   try {
+    // Simple type check for input arguments.
     if (typeof str !== "string") {
       throw new Error("1st argument must be a string.");
     }
