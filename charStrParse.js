@@ -31,11 +31,7 @@ async function wordsFromStringPermRecurse(str, wordArray = null) {
         return;
       }
       for(let i = 0; i < stringLength; i++) {
-        // Check by index value if character has been used
-        // Although indexof method of an array is slightly more performant than on a string
-        // the concat method needed to add the new value to the array is less performant
-        // than the string concatonation method of '+' therefore making the overall function
-        // performance worse, hense the use of a string to track the used character index.
+        // Check by index value if character has been used, add permutation to results.
         if(used.indexOf("" + i) < 0) {
           result.add(key + stringArray[i]);
           nextLetter(stringArray, stringLength, key + stringArray[i], used + i);
